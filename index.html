@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>KRTI 人格测试 - 假面骑士性格诊断</title>
+<style>
+/* ========== 全局重置与基础样式 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* ========== 页面容器 ========== */
+.page { display: none; max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+.page.active { display: block; }
+
+/* ========== 欢迎页 ========== */
+.welcome-hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+}
+.welcome-hero h1 {
+  font-size: 2.2em;
+  font-weight: 800;
+  background: linear-gradient(135deg, #E3001B, #F39C12, #8E44AD);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+.welcome-hero .subtitle {
+  font-size: 1.1em;
+  color: #86868b;
+  margin-bottom: 32px;
+}
+.welcome-hero .desc {
+  font-size: 0.95em;
+  color: #6e6e73;
+  max-width: 360px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+}
+.dim-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0 auto 40px;
+  max-width: 360px;
+}
+.dim-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  text-align: center;
+}
+.dim-card .dim-label {
+  font-size: 0.8em;
+  color: #86868b;
+  margin-bottom: 6px;
+}
+.dim-card .dim-poles {
+  font-size: 0.85em;
+  color: #1d1d1f;
+  font-weight: 600;
+}
+
+/* ========== 按钮 ========== */
+.btn-primary {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #E3001B, #C0392B);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px rgba(227,0,27,0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(227,0,27,0.4); }
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary {
+  display: inline-block;
+  padding: 12px 28px;
+  background: #fff;
+  color: #1d1d1f;
+  border: 2px solid #e5e5ea;
+  border-radius: 12px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { border-color: #E3001B; color: #E3001B; }
+
+/* ========== 答题页 ========== */
+.progress-bar-container {
+  position: sticky;
+  top: 0;
+  background: #f5f5f7;
+  padding: 12px 0 16px;
+  z-index: 10;
+}
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+  color: #86868b;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #e5e5ea;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E3001B, #F39C12);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.question-section {
+  margin-top: 8px;
+}
+.question-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0f0f5;
+  border-radius: 20px;
+  font-size: 0.75em;
+  color: #86868b;
+  margin-bottom: 16px;
+}
+.question-text {
+  font-size: 1.2em;
+  font-weight: 700;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  color: #1d1d1f;
+}
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.option-btn {
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  background: #fff;
+  border: 2px solid #e5e5ea;
+  border-radius: 14px;
+  font-size: 0.95em;
+  color: #1d1d1f;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.6;
+}
+.option-btn:hover {
+  border-color: #E3001B;
+  background: #fff5f5;
+  transform: translateX(4px);
+}
+.option-btn:active { transform: translateX(2px); }
+
+/* ========== 结果页 ========== */
+.result-hero {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: #1d1d1f;
+}
+.result-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.result-hero .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 20px 20px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.75));
+  color: #fff;
+}
+.result-hero .rider-type-label {
+  font-size: 0.8em;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+.result-hero .rider-name {
+  font-size: 1.8em;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.result-hero .rider-tag {
+  font-size: 1em;
+  opacity: 0.9;
+}
+.result-section {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.result-section h2 {
+  font-size: 1.05em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1d1d1f;
+  text-align: center;
+}
+.dim-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.dim-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dim-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8em;
+  color: #6e6e73;
+}
+.dim-bar-labels .dim-a { color: #E3001B; font-weight: 600; }
+.dim-bar-labels .dim-b { color: #2C3E50; font-weight: 600; }
+.dim-bar-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+.dim-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 1s ease;
+}
+.dim-bar-fill.热情 { background: linear-gradient(90deg, #E3001B, #F39C12); }
+.dim-bar-fill.理想 { background: linear-gradient(90deg, #8E44AD, #F39C12); }
+.dim-bar-fill.社交 { background: linear-gradient(90deg, #E74C3C, #F1C40F); }
+.dim-bar-fill.行动 { background: linear-gradient(90deg, #E67E22, #2ECC71); }
+.dim-bar-percent {
+  text-align: center;
+  font-size: 0.75em;
+  color: #86868b;
+  font-weight: 600;
+}
+.quote-box {
+  font-style: italic;
+  font-size: 0.95em;
+  color: #6e6e73;
+  text-align: center;
+  padding: 16px;
+  border-left: 3px solid #E3001B;
+  background: #fafafa;
+  border-radius: 0 12px 12px 0;
+  line-height: 1.8;
+}
+.description-text {
+  font-size: 0.95em;
+  color: #3a3a3c;
+  line-height: 1.9;
+}
+.result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.result-actions .btn-primary {
+  max-width: 200px;
+  font-size: 0.95em;
+  padding: 14px 24px;
+}
+
+/* ========== 匹配度标签 ========== */
+.match-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #E3001B, #C0392B);
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* ========== 过渡动画 ========== */
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 480px) {
+  /* 欢迎页 */
+  .page { padding: 16px 12px; }
+  .welcome-hero { padding: 40px 12px 30px; }
+  .welcome-hero h1 { font-size: 1.8em; }
+  .welcome-hero .subtitle { font-size: 1em; }
+  .welcome-hero .desc { font-size: 0.9em; }
+  .dim-preview { max-width: 100%; gap: 8px; }
+  .dim-card { padding: 12px 8px; }
+  .dim-card .dim-poles { font-size: 0.75em; }
+
+  /* 按钮 */
+  .btn-primary { padding: 14px 24px; font-size: 1em; border-radius: 12px; }
+  .btn-secondary { padding: 10px 20px; font-size: 0.9em; }
+
+  /* 答题页 */
+  .question-text { font-size: 1.1em; }
+  .option-btn { padding: 14px 16px; font-size: 0.9em; border-radius: 12px; }
+
+  /* 结果页 */
+  .result-hero { height: 240px; border-radius: 16px; margin-bottom: 16px; }
+  .result-hero .overlay { padding: 20px 16px 16px; }
+  .result-hero .rider-name { font-size: 1.5em; }
+  .result-hero .rider-tag { font-size: 0.9em; }
+  .result-section { padding: 20px 16px; margin-bottom: 12px; border-radius: 16px; }
+  .result-section h2 { font-size: 1em; margin-bottom: 16px; }
+  .dim-bar-group { gap: 14px; }
+  .dim-bar-labels { font-size: 0.75em; }
+  .dim-bar-track { height: 8px; }
+  .quote-box { font-size: 0.9em; padding: 12px; }
+  .description-text { font-size: 0.9em; }
+  .result-actions { gap: 8px; }
+  .result-actions .btn-primary { max-width: 160px; font-size: 0.85em; padding: 12px 16px; }
+  .result-actions .btn-secondary { font-size: 0.85em; padding: 10px 16px; }
+}
+
+@media (max-width: 340px) {
+  .welcome-hero h1 { font-size: 1.6em; }
+  .result-hero { height: 200px; }
+  .result-hero .rider-name { font-size: 1.3em; }
+  .option-btn { padding: 12px 14px; font-size: 0.85em; }
+}
+
+/* ========== 隐藏的Canvas ========== */
+#shareCanvas { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ==================== 欢迎页 ==================== -->
+<div id="welcomePage" class="page active">
+  <div class="welcome-hero fade-in">
+    <h1>KRTI 人格测试</h1>
+    <p class="subtitle">发现你的假面骑士灵魂</p>
+    <p class="desc">
+      通过 20 道性格测试题，从热情度、理想度、社交度、行动力四个维度分析你的性格，
+      匹配出最像你的假面骑士！
+    </p>
+    <div class="dim-preview">
+      <div class="dim-card">
+        <div class="dim-label">热情度</div>
+        <div class="dim-poles">🔥 热情洋溢 ↔ 🧊 冷静内敛</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-label">理想度</div>
+        <div class="dim-poles">🌈 理想主义 ↔ 📐 现实主义</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-label">社交度</div>
+        <div class="dim-poles">👥 社交达人 ↔ 🎭 独行侠</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-label">行动力</div>
+        <div class="dim-poles">⚡ 行动派 ↔ 📋 计划派</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">开始测试</button>
+  <button class="btn-secondary" onclick="quickTest()" style="margin-top:12px;font-size:13px;color:#999;border:1px dashed #ccc;background:none;cursor:pointer;padding:10px 20px;border-radius:25px;">快速测试（跳过答题）</button>
+  </div>
+</div>
+
+<!-- ==================== 答题页 ==================== -->
+<div id="quizPage" class="page">
+  <div class="progress-bar-container">
+    <div class="progress-info">
+      <span id="progressText">第 1 / 20 题</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 5%"></div>
+    </div>
+  </div>
+  <div class="question-section fade-in" id="questionSection">
+    <p class="question-text" id="questionText"></p>
+    <div class="options-list" id="optionsList"></div>
+  </div>
+</div>
+
+<!-- ==================== 结果页 ==================== -->
+<div id="resultPage" class="page">
+  <div class="fade-in" id="resultContent"></div>
+</div>
+
+<!-- 隐藏的分享用Canvas -->
+<canvas id="shareCanvas" width="750" height="1000"></canvas>
+
+<script>
+// 同步加载图片Base64数据（兼容file://协议）
+try {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'images.js', false);
+  xhr.send();
+  if (xhr.status === 200 || xhr.status === 0) {
+    eval(xhr.responseText);
+  }
+} catch(e) {
+  console.warn('图片加载失败，将使用颜色块代替:', e);
+}
+</script>
+<script>
+// ==================== 骑士维度分数档案 ====================
+const riderProfiles = {
+  kuuga:   { E: 90, I: 10, N: 85, S: 15, F: 95, T: 5,  P: 70, J: 30 },
+  agito:   { E: 60, I: 40, N: 70, S: 30, F: 65, T: 35, P: 55, J: 45 },
+  ryuki:   { E: 80, I: 20, N: 90, S: 10, F: 85, T: 15, P: 75, J: 25 },
+  faiz:    { E: 30, I: 70, N: 40, S: 60, F: 50, T: 50, P: 40, J: 60 },
+  blade:   { E: 25, I: 75, N: 55, S: 45, F: 35, T: 65, P: 45, J: 55 },
+  hibiki:  { E: 55, I: 45, N: 50, S: 50, F: 60, T: 40, P: 50, J: 50 },
+  kabuto:  { E: 70, I: 30, N: 60, S: 40, F: 30, T: 70, P: 65, J: 35 },
+  deno:    { E: 20, I: 80, N: 45, S: 55, F: 40, T: 60, P: 30, J: 70 },
+  kiva:    { E: 25, I: 75, N: 65, S: 35, F: 30, T: 70, P: 40, J: 60 },
+  decade:  { E: 65, I: 35, N: 55, S: 45, F: 45, T: 55, P: 60, J: 40 },
+  w:       { E: 55, I: 45, N: 50, S: 50, F: 55, T: 45, P: 50, J: 50 },
+  ooo:     { E: 75, I: 25, N: 45, S: 55, F: 70, T: 30, P: 65, J: 35 },
+  fourze:  { E: 95, I: 5,  N: 80, S: 20, F: 90, T: 10, P: 80, J: 20 },
+  wizard:  { E: 45, I: 55, N: 60, S: 40, F: 55, T: 45, P: 50, J: 50 },
+  gaim:    { E: 50, I: 50, N: 55, S: 45, F: 55, T: 45, P: 45, J: 55 },
+  drive:   { E: 50, I: 50, N: 45, S: 55, F: 55, T: 45, P: 45, J: 55 },
+  ghost:   { E: 30, I: 70, N: 75, S: 25, F: 45, T: 55, P: 35, J: 65 },
+  exaid:   { E: 70, I: 30, N: 55, S: 45, F: 60, T: 40, P: 80, J: 20 },
+  build:   { E: 60, I: 40, N: 65, S: 35, F: 35, T: 65, P: 70, J: 30 },
+  zio:     { E: 65, I: 35, N: 70, S: 30, F: 50, T: 50, P: 55, J: 45 }
+};
+
+// ==================== 内嵌骑士图片Base64 ====================
+// ==================== 内嵌骑士图片Base64 ====================
+
+
+
+
+
+// ==================== 骑士详细数据 ====================
+const riders = [
+  { key: "kuuga", name: "五代雄介", rider: "空我", riderEn: "Kuuga", year: 2000, quote: "我再也不想看到人们的眼泪！我想看到大家的笑容！", tag: "微笑守护者", description: "天生乐观的暖场王，看到别人难过比自己难过还难受。你的超能力是用笑容感染所有人，即使自己遍体鳞伤也要竖起大拇指。平成捡命王实锤——每次都能在绝境中奇迹般地活下来，运气好到离谱。", emoji: "👍", color: "#E3001B", image: "images/1kuuga.webp" },
+  { key: "agito", name: "津上翔一", rider: "Agito", riderEn: "Agito", year: 2001, quote: "谁也不能夺走人类的未来！", tag: "觉醒进化者", description: "你是一个不断成长的人。即使一开始什么都不懂，也会在战斗中逐渐找到自己的力量。你的进化速度让所有人都惊讶，但你自己其实也不知道自己为什么这么强。", emoji: "🌱", color: "#FFD700", image: "images/2Agito.webp" },
+  { key: "ryuki", name: "城户真司", rider: "龙骑", riderEn: "Ryuki", year: 2002, quote: "怎么能说没办法就算了呢？这可是一条人命啊！", tag: "理想主义愣头青", description: "你是那种看到不公就一定要站出来的人，即使全世界都说你傻。你相信人与人之间可以不靠战斗解决问题，虽然现实经常打你的脸，但你从不放弃。", emoji: "🦸", color: "#C0392B", image: "images/3ryuki.webp" },
+  { key: "faiz", name: "乾巧", rider: "Faiz", riderEn: "Faiz", year: 2003, quote: "我没有梦想，但是我可以守护梦想。", tag: "无梦守护者", description: "你看起来很酷很丧，实际上内心比谁都温柔。你说你没有梦想，但你一直在默默守护身边人的梦想。你是那种不会说漂亮话，但会默默站在你身后的人。", emoji: "🤘", color: "#1A1A2E", image: "images/4faiz.webp" },
+  { key: "blade", name: "剑崎一真", rider: "剑", riderEn: "Blade", year: 2004, quote: "此刻，那份力量全力释放！", tag: "孤狼赌徒", description: "你愿意为了重要的人赌上一切，包括自己的人性。你看起来很冷静，但一旦触及底线就会全力爆发。你的孤独不是因为没有朋友，而是因为你把所有的重量都扛在了自己肩上。", emoji: "🃏", color: "#2E86C1", image: "images/5 blade.webp" },
+  { key: "hibiki", name: "响鬼/日高仁志", rider: "响鬼", riderEn: "Hibiki", year: 2005, quote: "オニノイキ！", tag: "佛系打鼓人", description: "你是那种看起来很普通、实际上深藏不露的人。你不争不抢，但关键时刻总能稳住全场。你的生活方式让年轻人觉得'这大叔好酷'，你的鼓声能净化一切负面情绪。", emoji: "🥁", color: "#E67E22", image: "images/6hibiki.webp" },
+  { key: "kabuto", name: "天道总司", rider: "Kabuto", riderEn: "Kabuto", year: 2006, quote: "行走在天道之上，掌控一切。我就是正义！", tag: "天道傲娇王", description: "你是那种自信到让人想打你、但又不得不承认你确实很强的人。奶奶说过……你的人生信条就是'我乃行天之道，总司一切的男人'。虽然看起来很自恋，但你确实有自恋的资本。", emoji: "🦋", color: "#7D3C98", image: "images/7kabuto.webp" },
+  { key: "deno", name: "野上良太郎", rider: "电王", riderEn: "Den-O", year: 2007, quote: "我，登场了！", tag: "社恐附体人", description: "你是一个身体里住着好几个人格的社恐。平时唯唯诺诺，但关键时刻会突然切换成霸气模式——虽然那个霸气模式其实是你体内的'另一个家伙'。你的人生就像是被各种人格轮流操控的过山车。", emoji: "🚃", color: "#E74C3C", image: "images/8deno.webp" },
+  { key: "kiva", name: "红渡", rider: "Kiva", riderEn: "Kiva", year: 2008, quote: "觉醒！", tag: "夜行吸血鬼", description: "你是那种白天看起来迷迷糊糊、晚上突然变得超帅的人。你有点社恐，喜欢独处，但对音乐有着执着的热爱。你的人生就像一首哥特摇滚——孤独但华丽。", emoji: "🧛", color: "#8E44AD", image: "images/9kiva.webp" },
+  { key: "decade", name: "门矢士", rider: "Decade", riderEn: "Decade", year: 2009, quote: "破坏一切，连接一切！平成骑士？你还早了10年呢！", tag: "穿越拍照狂", description: "你是那种什么都懂一点、但什么都不精的人。你游走在不同的圈子之间，像是一个永远的旅人。你拍照的技术一流，但你最擅长的是——在别人的故事里当主角。", emoji: "📸", color: "#F39C12", image: "images/10decade.webp" },
+  { key: "w", name: "左翔太郎&菲利普", rider: "W", riderEn: "W", year: 2009, quote: "撒，来细数你的罪恶吧。", tag: "双人成行侦探", description: "你是那种一个人待着的时候是硬汉侦探、和朋友在一起就变成搞笑担当的人。你擅长观察细节，但你最出名的技能是——摆出一个帅气的姿势然后说一句中二台词。硬汉侦探，委托受理！", emoji: "🕵️", color: "#2C3E50", image: "images/11w.webp" },
+  { key: "ooo", name: "火野映司", rider: "OOO", riderEn: "OOO", year: 2010, quote: "我来变身！！！", tag: "伸手达人", description: "你是一个对什么都感兴趣、什么都想摸一摸的人。你的手永远在空中比划着什么，仿佛随时准备抓住什么。你看起来吊儿郎当，但一旦有想要保护的东西，你会毫不犹豫地冲上去。", emoji: "🤲", color: "#D4AC0D", image: "images/12ooo.webp" },
+  { key: "fourze", name: "如月弦太朗", rider: "Fourze", riderEn: "Fourze", year: 2011, quote: "宇宙来了！", tag: "热血社交王", description: "你是那种走到哪里都能交到朋友的人。你的热情有时候让人觉得'这人是不是有病'，但你用真心打动了所有人。你是校园里最受欢迎的人，虽然有时候你的操作确实很土。", emoji: "🚀", color: "#E74C3C", image: "images/13fourze.webp" },
+  { key: "wizard", name: "操真晴人", rider: "Wizard", riderEn: "Wizard", year: 2012, quote: "来吧，表演时间到了！", tag: "魔法暖男", description: "你是那种表面看起来很酷、实际上内心非常细腻的人。你擅长用'魔法'（其实就是你的温柔）治愈身边的人。即使自己已经伤痕累累，也会笑着说'没关系，这是表演的一部分'。", emoji: "🎩", color: "#1ABC9C", image: "images/14wizard.webp" },
+  { key: "gaim", name: "葛叶纮汰", rider: "铠武", riderEn: "Gaim", year: 2013, quote: "你要怎么使用这份力量？", tag: "成长型男主", description: "你一开始只是个混日子的小混混，但命运把你推上了舞台。你从'给别人打工'变成了'自己扛大旗'，虽然过程很痛苦，但你最终成为了真正的英雄。你的成长速度堪比开了挂。", emoji: "🍊", color: "#E67E22", image: "images/15gaim.webp" },
+  { key: "drive", name: "泊进之介", rider: "Drive", riderEn: "Drive", year: 2014, quote: "这个男人，既是刑警也是假面骑士！！", tag: "慢热型刑警", description: "你是一个一开始看起来很普通、但越接触越觉得有魅力的人。你的口头禅是'我冷静地判断了一下'，但你其实经常感情用事。你是那种嘴上说着'这不关我的事'、身体却已经冲上去的人。", emoji: "🚗", color: "#E74C3C", image: "images/16drive.webp" },
+  { key: "ghost", name: "天空寺尊", rider: "Ghost", riderEn: "Ghost", year: 2015, quote: "燃烧生命吧！", tag: "透明系少年", description: "你是一个存在感极低、但内心世界非常丰富的人。你对生命有着独特的感悟，虽然别人经常忽略你，但你知道自己的价值。你的超能力是——即使变成幽灵也能继续战斗。", emoji: "👻", color: "#F1C40F", image: "images/17ghost.webp" },
+  { key: "exaid", name: "宝生永梦", rider: "Ex-Aid", riderEn: "Ex-Aid", year: 2016, quote: "不续命就改变命运！！", tag: "游戏人生玩家", description: "你是那种把人生当成游戏来玩的人。你相信'Game Over不是结束，而是新的开始'。你的操作意识一流，反应速度惊人，但你最大的弱点是——太容易上头，经常忘记这是现实不是游戏。", emoji: "🎮", color: "#E74C3C", image: "images/18exaid.webp" },
+  { key: "build", name: "桐生战兔", rider: "Build", riderEn: "Build", year: 2017, quote: "那么，开始实验吧。", tag: "天才疯批科学家", description: "你是那种智商极高、情商堪忧的人。你能在三秒内算出物理公式，但搞不懂为什么朋友会生气。你的口头禅是'我是天才'，虽然大家都不想承认，但你确实很天才。", emoji: "🧪", color: "#E74C3C", image: "images/19build.jpeg" },
+  { key: "zio", name: "常磐庄吾", rider: "Zi-O", riderEn: "Zi-O", year: 2018, quote: "我要成为假面骑士之王！", tag: "中二时间之王", description: "你是一个从小就有'我要当王'这种中二梦想的人。虽然别人都觉得你在做梦，但你居然真的做到了。你拥有操控时间的能力——虽然你经常用这个能力来做一些很蠢的事情。", emoji: "⌚", color: "#FFD700", image: "images/20zio.webp" }
+];
+
+// ==================== 6道梗题（每次随机抽取3道） ====================
+const memeQuestions = [
+  {
+    category: "假面骑士梗题",
+    question: "你最喜欢的食物是什么？",
+    options: [
+      { text: "我是只吃泡面的肌肉笨蛋！", scores: { E: 3, N: 2, F: 1, P: 3 } },
+      { text: "今晚去吃烤肉吧！人多才热闹！", scores: { E: 3, S: 2, F: 3, P: 1 } },
+      { text: "甜品爱好者！蛋糕、巧克力、布丁都不能少~", scores: { I: 2, N: 2, F: 1, J: 2 } },
+      { text: "滑嫩的豆腐……简单但回味无穷。", scores: { I: 3, S: 2, T: 2, J: 1 } }
+    ]
+  },
+  {
+    category: "假面骑士梗题",
+    question: "如果有人突然在你面前大喊'变身'，你的第一反应是？",
+    options: [
+      { text: "热血沸腾！我也想变身！然后摆个帅气的pose！", scores: { E: 3, N: 3, F: 2, P: 2 } },
+      { text: "默默后退三步，假装不认识这个人。", scores: { I: 3, S: 2, T: 2, J: 2 } },
+      { text: "掏出手机录像！这素材发朋友圈肯定火！", scores: { E: 2, S: 2, F: 3, P: 2 } },
+      { text: "冷静分析：他是不是在拍短视频？需要配合吗？", scores: { I: 2, S: 3, T: 3, J: 2 } }
+    ]
+  },
+  {
+    category: "假面骑士梗题",
+    question: "你理想中的交通工具是什么？",
+    options: [
+      { text: "摩托车！风驰电掣，帅就完事了！", scores: { E: 3, N: 1, F: 1, P: 3 } },
+      { text: "一列能穿越时间的电车，浪漫到不行。", scores: { I: 2, N: 3, F: 1, J: 2 } },
+      { text: "随便什么车都行，能到目的地就好。", scores: { I: 1, S: 3, T: 2, J: 3 } },
+      { text: "走路！散步时思考人生才是最棒的。", scores: { I: 3, N: 2, F: 1, P: 1 } }
+    ]
+  },
+  {
+    category: "假面骑士梗题",
+    question: "你突然获得了一个'腰带'，你觉得它最可能是什么功能？",
+    options: [
+      { text: "变身！然后大喊台词拯救世界！", scores: { E: 3, N: 3, F: 2, P: 2 } },
+      { text: "时间暂停/倒流，让我重新来过。", scores: { I: 3, N: 2, T: 2, J: 3 } },
+      { text: "召唤各种小道具，像哆啦A梦一样。", scores: { E: 2, N: 3, F: 2, P: 2 } },
+      { text: "先研究说明书再说，搞清楚再使用。", scores: { I: 2, S: 3, T: 3, J: 2 } }
+    ]
+  },
+  {
+    category: "假面骑士梗题",
+    question: "你的口头禅最接近哪一句？",
+    options: [
+      { text: "奶奶曾经说过……（然后开始说一些莫名其妙的话）", scores: { E: 2, N: 2, T: 1, P: 2 } },
+      { text: "我来了！我登场了！虽然不知道要干什么！", scores: { E: 3, N: 1, F: 2, P: 3 } },
+      { text: "让我来细数一下你的罪恶吧。（推眼镜）", scores: { I: 2, S: 2, T: 3, J: 3 } },
+      { text: "这味道……是说谎的味道！（虽然完全不懂什么意思）", scores: { E: 2, N: 2, F: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "假面骑士梗题",
+    question: "如果让你选一个超能力，你会选？",
+    options: [
+      { text: "变身成各种形态！每种形态都有不同的超能力！", scores: { E: 2, N: 3, F: 1, P: 2 } },
+      { text: "时间操控！暂停、倒流、快进都可以！", scores: { I: 2, N: 2, T: 3, J: 2 } },
+      { text: "分身术！一个我上班，一个我打游戏！", scores: { E: 2, S: 2, F: 1, P: 3 } },
+      { text: "读心术！这样就不会猜不透别人在想什么了。", scores: { I: 3, N: 2, F: 2, J: 1 } }
+    ]
+  }
+];
+
+// ==================== 40道题目（每次随机抽取20道） ====================
+const questions = [
+  // ---- 第1-10题：日常社交场景 ----
+  {
+    category: "日常社交场景",
+    text: "周末到了，朋友突然约你出去聚会，你通常会？",
+    options: [
+      { text: "太好了！马上叫上更多人，热闹才是王道！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "先看看有没有时间，再考虑要不要去。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "去啊，不过我更想和几个熟悉的朋友小聚。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "我更想一个人在家待着，但也不想扫兴……", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "在一个陌生的社交场合里，你的第一反应是？",
+    options: [
+      { text: "主动走到人群中间，自我介绍，迅速融入气氛。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "找个安静的角落坐下，先观察一下再说。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "寻找有没有认识的人，从熟人开始搭话。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "脑补各种可能的对话场景，但迟迟迈不出第一步。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "朋友遇到困难来找你倾诉，你一般会怎么做？",
+    options: [
+      { text: "立刻放下手头的事，陪在身边听他说，给他一个大大的拥抱。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "冷静分析问题所在，帮他理清思路，给出具体建议。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "先安慰情绪，然后一起商量解决办法。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "虽然不知道怎么安慰，但会默默陪着他，用行动表达支持。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "你更享受哪种类型的聊天？",
+    options: [
+      { text: "天马行空地聊未来、聊梦想、聊各种可能性！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "聊一些具体实用的话题，比如最近看了什么书、学了什么技能。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "聊生活趣事和八卦，轻松愉快的氛围最好。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "深度对话，探讨人生意义、哲学问题之类的。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "你手机里的群聊通常是怎样的状态？",
+    options: [
+      { text: "好几个群都在99+，我就是那个活跃气氛的人！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "消息不多，但我每条都会认真看，重要的会回复。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "有几个固定的群，经常和熟悉的人聊天打闹。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "大部分群都设了免打扰，偶尔翻翻看有没有重要消息。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "聚会结束后回到家，你通常的第一件事是？",
+    options: [
+      { text: "发朋友圈/动态，记录今晚的快乐时光！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "洗澡、卸妆、收拾东西，按流程来。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "给没去的朋友发消息：'你们错过了好多好玩的！'", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "瘫在沙发上，回味今晚的某个瞬间，然后陷入沉思。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "你在朋友圈/社交平台的风格更接近哪种？",
+    options: [
+      { text: "高频更新，各种自拍、美食、旅行，生活就是要分享！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "偶尔发一条，内容通常是干货或者有意义的分享。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "喜欢给朋友点赞评论，自己发得不多。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "万年潜水党，但会默默看所有人的动态。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "参加完一场社交活动后，你的'社交电量'通常还剩多少？",
+    options: [
+      { text: "满格！越社交越兴奋，恨不得再约下一场！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "比较稳定，社交对我来说不特别消耗也不特别充电。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "取决于和谁在一起，对的人让我充电，错的人让我耗电。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "已经快没电了，需要一个人安静地回血。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "在餐厅吃饭，服务员上错了菜，你会？",
+    options: [
+      { text: "大声叫服务员过来，'嘿！这菜不对啊！'态度友好但直接。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "默默拍个照，然后叫服务员过来冷静说明情况。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "先问问同桌的人要不要凑合吃，再决定要不要叫服务员。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "算了，将就吃吧……不想引起注意。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "日常社交场景",
+    text: "你和朋友之间更常见的是哪种相处模式？",
+    options: [
+      { text: "我主动组织各种活动，朋友都叫我'社交担当'。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "朋友约我才出去，我很少主动发起聚会。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "两三个人的小聚最舒服，不需要太多人。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "比起见面，我更喜欢在线上和朋友聊天。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  // ---- 第11-20题：面对压力和挑战 ----
+  {
+    category: "面对压力和挑战",
+    text: "面对一个棘手的问题，你的第一反应是？",
+    options: [
+      { text: "先相信自己一定能搞定，然后直接上手干！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "冷静下来，收集信息，制定一个详细的计划。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "找有经验的人请教，大家一起想办法。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "先在脑子里模拟各种方案，想好了再行动。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "截止日期快到了，但你还没完成任务，你会？",
+    options: [
+      { text: "拼了！开个通宵也要搞完，热血燃烧的时候效率最高！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "按部就班地推进，之前已经做好了时间规划。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "赶紧找同事或朋友帮忙，分工合作效率更高。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "虽然焦虑，但告诉自己还有时间，先理清优先级。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "当你和别人的意见发生严重分歧时，你会？",
+    options: [
+      { text: "坚持自己的想法，用热情和信念说服对方！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "用事实和数据说话，理性地分析哪个方案更好。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "尝试找到一个双方都能接受的折中方案。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "表面不争，但内心坚持自己的看法，用行动证明。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "遇到失败的时候，你通常会怎么调整？",
+    options: [
+      { text: "短暂沮丧后很快振作，'下次一定行'是我的口头禅！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "认真复盘失败原因，确保同样的错误不再犯。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "找朋友倾诉一下，心情好了再重新出发。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "一个人静静待着，消化完情绪后默默重新开始。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "面对一个你从未尝试过的全新挑战，你的态度是？",
+    options: [
+      { text: "兴奋！新事物太有意思了，直接冲就完事了！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "先了解清楚情况，评估风险后再决定要不要做。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "如果有伙伴一起尝试的话，我就更有信心了。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "内心有点抗拒，但一旦开始就会发现其实也没那么难。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "突然被安排到一个完全陌生的城市工作/生活，你的反应是？",
+    options: [
+      { text: "太棒了！新环境新机遇，我已经迫不及待想探索了！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "先查好当地的生活信息，做好攻略再出发。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "有点不安，但想到能认识新朋友就觉得还行。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "表面平静，内心其实在想'我到底在追求什么'。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "工作中被领导当众批评了，你会怎么处理？",
+    options: [
+      { text: "当场表态会改进，然后真的充满干劲地去改！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "记下批评内容，回去分析问题出在哪里，制定改进方案。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "找信任的同事聊聊，听听他们的看法和建议。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "表面上'好的收到'，内心已经把这段经历刻进灵魂里了。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "需要做一个可能改变人生方向的重大决定时，你会？",
+    options: [
+      { text: "跟着直觉走！心里觉得对就去做！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "列出利弊清单，咨询专业人士，做最理性的选择。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "和家人朋友商量，听听他们的意见再做决定。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "反复纠结很久，直到某个瞬间突然想通了。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "你的计划突然被打乱（比如航班取消、活动改期），你会？",
+    options: [
+      { text: "没关系！Plan B马上安排，甚至觉得Plan B更刺激！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "立刻查询替代方案，重新规划行程。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "看看能不能和同行的人一起商量个新方案。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "有点崩溃，但安慰自己'也许这就是命'，顺其自然吧。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "面对压力和挑战",
+    text: "连续加班一周后终于到周末了，你会怎么度过？",
+    options: [
+      { text: "约朋友出去玩！被关了一周了，必须释放一下！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "补觉、整理房间、处理积压的私事，恢复秩序。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "和最亲近的人待在一起，什么都不做就很幸福。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "一个人窝着，刷剧、打游戏、放空，谁也别来烦我。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  // ---- 第21-30题：价值观和人生观 ----
+  {
+    category: "价值观和人生观",
+    text: "你觉得人生中最重要的是什么？",
+    options: [
+      { text: "追逐梦想，让世界变得更美好！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "脚踏实地，过好每一天，做好每一件事。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "身边珍视的人，有他们在就很幸福了。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "找到属于自己的道路，哪怕这条路很孤独。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "如果可以拥有一种超能力，你最想要？",
+    options: [
+      { text: "治愈一切伤痛的能力，让所有人都幸福！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "看透事物本质的能力，永远做出最优选择。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "和任何人都能心意相通的能力，消除一切误解。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "操控时间的能力，可以弥补过去的遗憾。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "你怎么看待'规则'这件事？",
+    options: [
+      { text: "规则是死的，人是活的！该打破的时候就要打破！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "规则的存在是有道理的，遵守规则才能维持秩序。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "大部分时候遵守，但遇到不合理的地方会提出来。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "规则对我影响不大，我更在意自己内心的准则。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "你更认同哪种生活态度？",
+    options: [
+      { text: "人生苦短，及时行乐！每天都应该活得精彩！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "未雨绸缪，为未来做好充分准备才是正道。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "平平淡淡才是真，和喜欢的人在一起就够了。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "不断探索未知，寻找生命的深层意义。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "你理想中的'成功'是什么样的？",
+    options: [
+      { text: "被很多人喜爱和认可，成为大家的太阳！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "在自己的领域做到顶尖，用实力说话。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "拥有一个幸福的家庭和一群真心朋友。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "活出真实的自己，不被世俗定义所束缚。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "关于金钱，你最接近哪种想法？",
+    options: [
+      { text: "钱是用来创造快乐和体验的，花出去才有价值！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "钱是安全感的来源，要合理规划、稳健理财。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "钱够用就好，最重要的是和喜欢的人一起花。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "钱是实现理想的工具，不是人生的目的。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "如果中了一千万大奖，你的第一反应是？",
+    options: [
+      { text: "马上请所有朋友吃大餐！然后去旅行！全世界都要知道！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "先冷静下来，咨询财务顾问，制定投资计划。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "先给家人买份大礼，然后和最亲的人一起庆祝。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "内心毫无波澜，甚至觉得这笔钱会带来麻烦……", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "你怎么看待'合群'这件事？",
+    options: [
+      { text: "合群很重要啊！融入集体才能获得更多快乐！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "没必要刻意合群，做好自己该做的事就行。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "和志同道合的人在一起才叫合群，否则不如独处。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "合群是表面功夫，真正的归属感来自内心。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "你更向往哪种生活方式？",
+    options: [
+      { text: "充满冒险和惊喜的生活，每天都不同才刺激！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "稳定有序的生活，有规律才有安全感。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "和爱人朋友住在一起，周末一起做饭看电影。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "一个人住在山里或者海边，远离喧嚣，与世无争。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "价值观和人生观",
+    text: "如果人生是一部电影，你希望它是什么类型的？",
+    options: [
+      { text: "热血冒险片！主角一路打怪升级，最终拯救世界！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "悬疑推理片，主角靠智慧一步步揭开真相。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "温情治愈片，主角和朋友们一起成长的故事。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "文艺独立片，可能很多人看不懂，但每一帧都有深意。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  // ---- 第31-40题：深层性格和内心世界 ----
+  {
+    category: "深层性格和内心世界",
+    text: "独处的时候，你通常在做什么？",
+    options: [
+      { text: "听音乐、看视频，或者幻想各种有趣的场景。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "看书、学习新技能，或者整理自己的思路。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "给朋友发消息，或者翻看以前的聊天记录和照片。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "发呆、写日记，或者沉浸在自己的内心世界里。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "深夜睡不着的时候，你脑子里在想什么？",
+    options: [
+      { text: "明天要做什么好玩的事！或者回味今天开心的瞬间。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "最近的工作/学习计划，或者明天待办事项清单。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "今天和某人的对话，'当时应该那么说就好了'。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "各种天马行空的想法，或者对人生意义的思考。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "你觉得自己最突出的优点是什么？",
+    options: [
+      { text: "感染力！我能让身边的人都变得积极起来！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "冷静和理性，无论什么情况都能保持清醒的头脑。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "善解人意，总能站在别人的角度思考问题。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "坚韧不拔，即使独自一人也能咬牙坚持到底。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "如果用一个词来形容你内心的真实状态，会是？",
+    options: [
+      { text: "一团燃烧的火焰，永远充满热情和能量！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "一座坚固的堡垒，沉稳而可靠。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "一片温暖的阳光，温柔地照亮周围的人。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "一片深邃的星空，安静但充满无限可能。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "你觉得自己最害怕的是什么？",
+    options: [
+      { text: "失去身边珍视的人，孤独地活着。", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "失去控制，无法把握自己的人生方向。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "被误解和孤立，没有人理解真实的自己。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "虚度一生，最终发现自己什么都没留下。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "你内心深处那个'小孩'是什么样子的？",
+    options: [
+      { text: "一个永远在奔跑的小孩，对世界充满好奇！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "一个安静看书的小孩，在角落里构建自己的世界。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "一个拉着朋友的手、笑容灿烂的小孩。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "一个望着窗外发呆的小孩，眼神里藏着整个宇宙。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "当你听到一首特别打动你的歌时，你通常会？",
+    options: [
+      { text: "立刻分享给所有人！'这首歌太好听了你们快听！'", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "单曲循环，分析歌词和编曲的精妙之处。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "想到某个人，把歌发给TA：'这首歌让我想到你了。'", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "戴上耳机，闭上眼睛，让音乐把自己淹没。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "你觉得'真正的自己'和'别人眼中的自己'差距大吗？",
+    options: [
+      { text: "没什么差距，我表里如一，开心就笑难过就说！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "差距不大，我展示的就是真实的自己。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "有点差距，在熟人面前更放松，在陌生人面前更拘谨。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "差距很大，我内心住着一个完全不同的人。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "什么事情最容易让你感到'活着真好'？",
+    options: [
+      { text: "和朋友们一起大笑到肚子疼的瞬间！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "完成了一项艰难的任务，看着成果的那一刻。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "被人在意、被需要的时刻，觉得自己很重要。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "独自看一场日落，或者深夜仰望星空的瞬间。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  },
+  {
+    category: "深层性格和内心世界",
+    text: "回首过去几年的成长，你最大的感悟是？",
+    options: [
+      { text: "人生就是要勇敢去闯，不试怎么知道自己有多强！", scores: { E: 3, N: 2, F: 2, P: 1 } },
+      { text: "脚踏实地比什么都重要，一步一个脚印才走得远。", scores: { I: 3, S: 2, T: 2, J: 1 } },
+      { text: "人际关系比成就更重要，珍惜身边每一个人。", scores: { E: 2, S: 2, F: 1, J: 2 } },
+      { text: "接受自己的不完美，与自己和解才是真正的成长。", scores: { I: 2, N: 2, T: 1, P: 2 } }
+    ]
+  }
+];
+
+// ==================== 全局状态 ====================
+let currentQuestion = 0;  // 当前题目索引
+let currentQuestions = [];  // 当前测试使用的题目（从40道中随机抽取20道）
+let dimScores = { E: 0, I: 0, N: 0, S: 0, F: 0, T: 0, P: 0, J: 0 };  // 维度累计分数
+let riderImageCache = {};  // 骑士图片Base64缓存（解决file://协议跨域问题）
+
+// ==================== 页面切换 ====================
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ==================== 开始测试 ====================
+// 快速测试：跳过答题直接显示结果（随机骑士）
+function quickTest() {
+  dimScores = { E: 0, I: 0, N: 0, S: 0, F: 0, T: 0, P: 0, J: 0 };
+  showResult();
+}
+
+function startQuiz() {
+  // 从40道常规题中随机抽取17道
+  var shuffledNormal = questions.slice().sort(function() { return Math.random() - 0.5; });
+  var normalPicked = shuffledNormal.slice(0, 17);
+  // 从6道梗题中随机抽取3道
+  var shuffledMeme = memeQuestions.slice().sort(function() { return Math.random() - 0.5; });
+  var memePicked = shuffledMeme.slice(0, 3);
+  // 合并并打乱顺序
+  currentQuestions = normalPicked.concat(memePicked).sort(function() { return Math.random() - 0.5; });
+  currentQuestion = 0;
+  dimScores = { E: 0, I: 0, N: 0, S: 0, F: 0, T: 0, P: 0, J: 0 };
+  showPage('quizPage');
+  renderQuestion();
+}
+
+// ==================== 渲染当前题目 ====================
+function renderQuestion() {
+  var q = currentQuestions[currentQuestion];
+  var total = currentQuestions.length;
+
+  // 更新进度条
+  document.getElementById('progressText').textContent = '第 ' + (currentQuestion + 1) + ' / ' + total + ' 题';
+  document.getElementById('progressFill').style.width = ((currentQuestion + 1) / total * 100) + '%';
+
+  // 更新分类标签
+  var catShort = q.category.replace('场景', '').replace('和', '');
+  var catEl = document.getElementById('categoryText');
+  if (catEl) catEl.textContent = catShort;
+
+  // 更新题目文本
+  document.getElementById('questionText').textContent = q.text || q.question || '';
+
+  // 渲染选项按钮
+  var optionsHtml = '';
+  for (var i = 0; i < q.options.length; i++) {
+    var opt = q.options[i];
+    var label = ['A', 'B', 'C', 'D'][i];
+    optionsHtml += '<button class="option-btn" onclick="selectOption(' + i + ')">';
+    optionsHtml += '<strong>' + label + '.</strong> ' + opt.text;
+    optionsHtml += '</button>';
+  }
+  document.getElementById('optionsList').innerHTML = optionsHtml;
+
+  // 添加淡入动画
+  var section = document.getElementById('questionSection');
+  section.classList.remove('fade-in');
+  // 触发重排以重新播放动画
+  void section.offsetWidth;
+  section.classList.add('fade-in');
+}
+
+// ==================== 选择选项 ====================
+function selectOption(index) {
+  var q = currentQuestions[currentQuestion];
+  var opt = q.options[index];
+
+  // 累加维度分数
+  var scores = opt.scores;
+  for (var key in scores) {
+    if (dimScores.hasOwnProperty(key)) {
+      dimScores[key] += scores[key];
+    }
+  }
+
+  currentQuestion++;
+
+  if (currentQuestion < currentQuestions.length) {
+    // 下一题
+    renderQuestion();
+  } else {
+    // 测试完成，计算结果
+    showResult();
+  }
+}
+
+// ==================== 计算维度百分比 ====================
+function getDimPercent(dimA, dimB) {
+  var total = dimScores[dimA] + dimScores[dimB];
+  if (total === 0) return 50;
+  return Math.round(dimScores[dimA] / total * 100);
+}
+
+// ==================== 匹配最接近的骑士 ====================
+function matchRider() {
+  var userE = getDimPercent('E', 'I');
+  var userN = getDimPercent('N', 'S');
+  var userF = getDimPercent('F', 'T');
+  var userP = getDimPercent('P', 'J');
+
+  var minDist = Infinity;
+  var matched = null;
+
+  for (var key in riderProfiles) {
+    var profile = riderProfiles[key];
+    var dist = Math.abs(userE - profile.E) +
+               Math.abs(userN - profile.N) +
+               Math.abs(userF - profile.F) +
+               Math.abs(userP - profile.P);
+    if (dist < minDist) {
+      minDist = dist;
+      matched = key;
+    }
+  }
+
+  // 计算匹配度（距离越小匹配度越高，最大距离400）
+  var matchPercent = Math.max(0, Math.round((1 - minDist / 400) * 100));
+
+  return { key: matched, matchPercent: matchPercent };
+}
+
+// ==================== 显示结果 ====================
+function showResult() {
+  var result = matchRider();
+  var riderData = null;
+  for (var i = 0; i < riders.length; i++) {
+    if (riders[i].key === result.key) {
+      riderData = riders[i];
+      break;
+    }
+  }
+  if (!riderData) return;
+
+  var userE = getDimPercent('E', 'I');
+  var userN = getDimPercent('N', 'S');
+  var userF = getDimPercent('F', 'T');
+  var userP = getDimPercent('P', 'J');
+
+  var html = '';
+
+  // 骑士大图
+  html += '<div class="result-hero">';
+  var imgSrc = (typeof riderImagesBase64 !== 'undefined' && riderImagesBase64[riderData.key]) || riderData.image || '';
+  if (imgSrc.length > 0) {
+    html += '<img src="' + imgSrc + '" style="width:100%;height:100%;object-fit:cover;object-position:center top;" onerror="this.style.display=\'none\'">';
+  } else {
+    html += '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:' + riderData.color + ';">' + riderData.emoji + '</div>';
+  }
+  html += '  <div class="overlay">';
+  html += '    <div class="rider-type-label">你的人格类型是</div>';
+  html += '    <div class="rider-name">假面骑士 ' + riderData.rider + '</div>';
+  html += '    <div class="rider-tag">' + riderData.emoji + ' ' + riderData.tag + '</div>';
+  html += '    <div class="match-badge">匹配度 ' + result.matchPercent + '%</div>';
+  html += '  </div>';
+  html += '</div>';
+
+  // 维度分析
+  html += '<div class="result-section">';
+  html += '  <h2>性格维度分析</h2>';
+  html += '  <div class="dim-bar-group">';
+
+  // 热情度
+  html += buildDimBar('热情', '热情洋溢', '冷静内敛', userE);
+  // 理想度
+  html += buildDimBar('理想', '理想主义', '现实主义', userN);
+  // 社交度
+  html += buildDimBar('社交', '社交达人', '独行侠', userF);
+  // 行动力
+  html += buildDimBar('行动', '行动派', '计划派', userP);
+
+  html += '  </div>';
+  html += '</div>';
+
+  // 经典台词
+  html += '<div class="result-section">';
+  html += '  <div class="quote-box">"' + riderData.quote + '"</div>';
+  html += '</div>';
+
+  // 性格描述
+  html += '<div class="result-section">';
+  html += '  <h2>人格解析</h2>';
+  html += '  <p class="description-text">' + riderData.description + '</p>';
+  html += '</div>';
+
+  // 作者的话
+  html += '<div class="result-section" style="background:rgba(0,0,0,0.03);">';
+  html += '  <h2>作者的话</h2>';
+  html += '  <p class="description-text" style="line-height:1.8;">';
+  html += '    SBTI爆火的时候正好在xhs刷到了有人给SBTI的测试图P假面骑士，受此启发，想给大家做一个骑士人格测试。';
+  html += '    由于作者本人目前只看完了电王、Build、EA，所以如果有什么错误的地方欢迎指出，也欢迎大家提供更多好玩的建议，我会采纳，让这个测试更加完善。';
+  html += '    <br><br><strong>最后，让我们Henshin！</strong>';
+  html += '    <br><br><span style="font-size:0.85em;color:#999;">本作品为基于 Trae Solo 开发的粉丝向创意应用，所有假面骑士角色版权均归属东映株式会社及万代南梦宫所有。本测试纯属娱乐，不用于任何商业盈利，仅供同人交流与技术展示。</span>';
+  html += '  </p>';
+  html += '</div>';
+
+  // 操作按钮
+  html += '<div class="result-actions">';
+  html += '  <button class="btn-primary" onclick="generateShareImage()">保存分享图片</button>';
+  html += '  <button class="btn-secondary" onclick="startQuiz()">重新测试</button>';
+  html += '  <button class="btn-secondary" onclick="showAllRiders()" style="margin-top:8px;font-size:12px;color:#999;border:1px dashed #ccc;background:none;cursor:pointer;padding:8px 16px;border-radius:8px;width:100%;">调试：查看所有骑士图片</button>';
+  html += '</div>';
+
+  document.getElementById('resultContent').innerHTML = html;
+  showPage('resultPage');
+
+  // 延迟触发进度条动画
+  setTimeout(function() {
+    var fills = document.querySelectorAll('.dim-bar-fill');
+    fills.forEach(function(fill) {
+      fill.style.width = fill.getAttribute('data-width');
+    });
+  }, 100);
+}
+
+// ==================== 构建维度进度条HTML ====================
+function buildDimBar(dimClass, labelA, labelB, percent) {
+  var html = '';
+  html += '<div class="dim-bar-item">';
+  html += '  <div class="dim-bar-labels">';
+  html += '    <span class="dim-a">' + labelA + '</span>';
+  html += '    <span class="dim-b">' + labelB + '</span>';
+  html += '  </div>';
+  html += '  <div class="dim-bar-track">';
+  html += '    <div class="dim-bar-fill ' + dimClass + '" style="width: 0%" data-width="' + percent + '%"></div>';
+  html += '  </div>';
+  html += '  <div class="dim-bar-percent">' + percent + '%</div>';
+  html += '</div>';
+  return html;
+}
+
+// ==================== 生成Canvas分享图片 ====================
+// 调试函数：显示所有骑士图片
+function showAllRiders() {
+  var html = '<div style="padding:20px;max-width:600px;margin:0 auto;">';
+  html += '<h2 style="text-align:center;margin-bottom:20px;">所有骑士图片检查</h2>';
+  html += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">';
+  for (var i = 0; i < riders.length; i++) {
+    var r = riders[i];
+    var imgSrc = r.image || '';
+    var hasImg = imgSrc.length > 0;
+    html += '<div style="border:1px solid #ddd;border-radius:8px;padding:8px;text-align:center;">';
+    html += '<div style="font-size:12px;color:#666;margin-bottom:4px;">' + r.rider + '</div>';
+    if (hasImg) {
+      html += '<img src="' + imgSrc + '" style="width:100%;height:120px;object-fit:cover;object-position:center top;border-radius:4px;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">';
+      html += '<div style="display:none;height:120px;align-items:center;justify-content:center;background:#f0f0f0;border-radius:4px;color:red;font-size:11px;">加载失败</div>';
+    } else {
+      html += '<div style="height:120px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;border-radius:4px;font-size:40px;">' + r.emoji + '</div>';
+    }
+    html += '<div style="font-size:10px;color:#999;margin-top:4px;">' + imgSrc + '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<button class="btn-secondary" onclick="startQuiz()" style="margin-top:20px;width:100%;">返回测试</button>';
+  html += '</div>';
+  document.getElementById('resultPage').innerHTML = html;
+  showPage('resultPage');
+}
+
+function generateShareImage() {
+  var result = matchRider();
+  var riderData = null;
+  for (var i = 0; i < riders.length; i++) {
+    if (riders[i].key === result.key) {
+      riderData = riders[i];
+      break;
+    }
+  }
+  if (!riderData) return;
+
+  var userE = getDimPercent('E', 'I');
+  var userN = getDimPercent('N', 'S');
+  var userF = getDimPercent('F', 'T');
+  var userP = getDimPercent('P', 'J');
+
+  // 先加载骑士图片，再绘制Canvas（优先用Base64缓存）
+  var imgSrc = riderData.image || '';
+  var cachedBase64 = (typeof riderImagesBase64 !== 'undefined' && riderImagesBase64[riderData.key]) || riderImageCache[riderData.key] || '';
+  if (cachedBase64.length > 0) {
+    // 使用预加载的Base64图片，无跨域问题
+    var img = new Image();
+    img.onload = function() {
+      drawShareCanvas(riderData, result, userE, userN, userF, userP, img);
+    };
+    img.onerror = function() {
+      drawShareCanvas(riderData, result, userE, userN, userF, userP, null);
+    };
+    img.src = cachedBase64;
+  } else if (imgSrc.length > 0) {
+    var img2 = new Image();
+    img2.crossOrigin = 'anonymous';
+    img2.onload = function() {
+      drawShareCanvas(riderData, result, userE, userN, userF, userP, img2);
+    };
+    img2.onerror = function() {
+      drawShareCanvas(riderData, result, userE, userN, userF, userP, null);
+    };
+    img2.src = imgSrc;
+  } else {
+    drawShareCanvas(riderData, result, userE, userN, userF, userP, null);
+  }
+}
+
+function drawShareCanvas(riderData, result, userE, userN, userF, userP, riderImg) {
+  var canvas = document.getElementById('shareCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = 750, H = 1334;
+
+  // 清空画布
+  ctx.clearRect(0, 0, W, H);
+
+  // 背景
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // 顶部横幅
+  ctx.fillStyle = '#1d1d1f';
+  ctx.fillRect(0, 0, W, 70);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 28px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('KRTI 人格测试', W / 2, 46);
+
+  // 骑士图片区域
+  var imgY = 90;
+  var imgH = 320;
+
+  if (riderImg) {
+    // 绘制骑士图片（裁剪顶部，显示头部）
+    var srcW = riderImg.naturalWidth;
+    var srcH = riderImg.naturalHeight;
+    var cropH = Math.min(srcH, srcH * 0.6);
+    var cropY = 0;
+    var drawW = W;
+    var drawH = imgH;
+    // 居中裁剪
+    var srcRatio = cropH / srcW;
+    var dstRatio = drawH / drawW;
+    if (srcRatio > dstRatio) {
+      drawW = drawH * srcW / cropH;
+    } else {
+      drawH = drawW * cropH / srcW;
+    }
+    var offsetX = (W - drawW) / 2;
+    ctx.drawImage(riderImg, 0, cropY, srcW, cropH, offsetX, imgY, drawW, drawH);
+    // 底部渐变遮罩
+    var grad = ctx.createLinearGradient(0, imgY + imgH - 80, 0, imgY + imgH);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.6)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, imgY + imgH - 80, W, 80);
+    // 骑士名（图片底部）
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('假面骑士 ' + riderData.rider, W / 2, imgY + imgH - 20);
+  } else {
+    // 没有图片，用颜色块+emoji代替
+    ctx.fillStyle = riderData.color;
+    ctx.fillRect(0, imgY, W, imgH);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 60px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(riderData.emoji, W / 2, imgY + 120);
+    ctx.font = 'bold 36px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText('假面骑士 ' + riderData.rider, W / 2, imgY + 180);
+    ctx.font = '24px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText(riderData.emoji + ' ' + riderData.tag, W / 2, imgY + 220);
+    ctx.font = 'bold 18px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('匹配度 ' + result.matchPercent + '%', W / 2, imgY + 258);
+  }
+
+  // 骑士名和标签（图片下方）
+  if (riderImg) {
+    var infoY = imgY + imgH + 15;
+    ctx.fillStyle = '#3a3a3c';
+    ctx.font = 'bold 28px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(riderData.rider + ' ' + riderData.riderEn, W / 2, infoY);
+    ctx.font = '18px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = riderData.color;
+    ctx.fillText(riderData.emoji + ' ' + riderData.tag + '  |  匹配度 ' + result.matchPercent + '%', W / 2, infoY + 30);
+  }
+
+  // 维度分析区域
+  var dimY = imgY + imgH + 30;
+  ctx.fillStyle = '#1d1d1f';
+  ctx.font = 'bold 22px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('性格维度分析', W / 2, dimY);
+
+  // 绘制4个维度进度条
+  var dims = [
+    { label: '热情', labelA: '🔥热情洋溢', labelB: '🧊冷静内敛', percent: userE, colorA: '#E3001B', colorB: '#2C3E50' },
+    { label: '理想', labelA: '🌈理想主义', labelB: '📐现实主义', percent: userN, colorA: '#8E44AD', colorB: '#2C3E50' },
+    { label: '社交', labelA: '👥社交达人', labelB: '🎭独行侠', percent: userF, colorA: '#E74C3C', colorB: '#2C3E50' },
+    { label: '行动', labelA: '⚡行动派', labelB: '📋计划派', percent: userP, colorA: '#E67E22', colorB: '#2C3E50' }
+  ];
+
+  var barStartY = dimY + 30;
+  var barMargin = 55;
+  var barX = 60;
+  var barW = W - 120;
+  var barH = 16;
+
+  for (var d = 0; d < dims.length; d++) {
+    var dim = dims[d];
+    var y = barStartY + d * barMargin;
+
+    // 标签
+    ctx.font = '16px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = dim.colorA;
+    ctx.fillText(dim.labelA, barX, y);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = dim.colorB;
+    ctx.fillText(dim.labelB, barX + barW, y);
+
+    // 进度条背景
+    var trackY = y + 8;
+    ctx.fillStyle = '#e5e5ea';
+    roundRect(ctx, barX, trackY, barW, barH, 8);
+    ctx.fill();
+
+    // 进度条填充（渐变）
+    var fillW = Math.max(barH, barW * dim.percent / 100);
+    var grad = ctx.createLinearGradient(barX, 0, barX + fillW, 0);
+    grad.addColorStop(0, dim.colorA);
+    grad.addColorStop(1, dim.colorB);
+    ctx.fillStyle = grad;
+    roundRect(ctx, barX, trackY, fillW, barH, 8);
+    ctx.fill();
+
+    // 百分比
+    ctx.fillStyle = '#86868b';
+    ctx.font = 'bold 14px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(dim.percent + '%', W / 2, trackY + barH + 18);
+  }
+
+  // 经典台词
+  var quoteY = barStartY + 4 * barMargin + 20;
+  ctx.fillStyle = '#f5f5f7';
+  roundRect(ctx, 40, quoteY, W - 80, 70, 12);
+  ctx.fill();
+  ctx.strokeStyle = '#E3001B';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(40, quoteY);
+  ctx.lineTo(40, quoteY + 70);
+  ctx.stroke();
+
+  ctx.fillStyle = '#6e6e73';
+  ctx.font = 'italic 16px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'left';
+  // 截断过长的台词
+  var quoteText = riderData.quote;
+  if (quoteText.length > 30) {
+    ctx.fillText('"' + quoteText.substring(0, 30) + '..."', 60, quoteY + 28);
+    ctx.fillText(quoteText.substring(30), 60, quoteY + 52);
+  } else {
+    ctx.fillText('"' + quoteText + '"', 60, quoteY + 40);
+  }
+
+  // 性格描述（前60字）
+  var descY = quoteY + 90;
+  ctx.fillStyle = '#3a3a3c';
+  ctx.font = '15px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'left';
+  var descText = riderData.description;
+  if (descText.length > 80) descText = descText.substring(0, 80) + '……';
+  // 简单换行
+  wrapText(ctx, descText, 50, descY, W - 100, 22);
+
+  // 底部
+  ctx.fillStyle = '#1d1d1f';
+  ctx.fillRect(0, H - 50, W, 50);
+  ctx.fillStyle = '#86868b';
+  ctx.font = '14px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('假面骑士 KAMEN RIDER', W / 2, H - 20);
+
+  // 导出图片
+  try {
+    var link = document.createElement('a');
+    link.download = 'KRTI-' + riderData.riderEn + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    // 如果Canvas导出失败，显示提示
+    alert('图片生成失败，请尝试截图保存。');
+  }
+}
+
+// ==================== Canvas辅助：圆角矩形 ====================
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ==================== Canvas辅助：文字换行 ====================
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  var chars = text.split('');
+  var line = '';
+  var lineY = y;
+  for (var i = 0; i < chars.length; i++) {
+    var testLine = line + chars[i];
+    var metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && line.length > 0) {
+      ctx.fillText(line, x, lineY);
+      line = chars[i];
+      lineY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, lineY);
+}
+</script>
+</body>
+</html>
